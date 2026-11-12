@@ -76,6 +76,14 @@ describe('association', () => {
         { from: 'Aluno', to: 'Turma', relationship: 'association', fromMult: '*', toMult: '0..3' }
       ])
     })
+
+    test('multiplicity *:*', () => {
+      const resultado = new Parser().parse(generateClass('association Turma [*:*]'))
+
+      assert.deepStrictEqual(resultado[0].relations, [
+        { from: 'Aluno', to: 'Turma', relationship: 'association', fromMult: '*', toMult: '*' }
+      ])
+    })
 })
 
 describe('directionalAssociation', () => {
@@ -139,6 +147,14 @@ describe('directionalAssociation', () => {
 
       assert.deepStrictEqual(resultado[0].relations, [
         { from: 'Aluno', to: 'Turma', relationship: 'directionalAssociation', fromMult: '*', toMult: '0..3' }
+      ])
+    })
+
+    test('multiplicity *:*', () => {
+      const resultado = new Parser().parse(generateClass('directionalAssociation Turma [*:*]'))
+
+      assert.deepStrictEqual(resultado[0].relations, [
+        { from: 'Aluno', to: 'Turma', relationship: 'directionalAssociation', fromMult: '*', toMult: '*' }
       ])
     })
 })
@@ -207,6 +223,14 @@ describe('composition', () => {
         { from: 'Turma', to: 'Aluno', relationship: 'composition', fromMult: '*', toMult: '0..3' }
       ])
     })
+
+    test('multiplicity *:*', () => {
+      const resultado = new Parser().parse(generateClass('composes Turma [*:*]'))
+
+      assert.deepStrictEqual(resultado[0].relations, [
+        { from: 'Turma', to: 'Aluno', relationship: 'composition', fromMult: '*', toMult: '*' }
+      ])
+    })
 })
 
 describe('aggregation', () => {
@@ -271,6 +295,14 @@ describe('aggregation', () => {
 
       assert.deepStrictEqual(resultado[0].relations, [
         { from: 'Turma', to: 'Aluno', relationship: 'aggregation', fromMult: '*', toMult: '0..3' }
+      ])
+    })
+
+    test('multiplicity *:*', () => {
+      const resultado = new Parser().parse(generateClass('aggreagates Turma [*:*]'))
+
+      assert.deepStrictEqual(resultado[0].relations, [
+        { from: 'Turma', to: 'Aluno', relationship: 'aggreagation', fromMult: '*', toMult: '*' }
       ])
     })
 })
