@@ -1,9 +1,12 @@
 # Modeligado
 
-This is a fork from the project on [modeligado](https://matheusgr.github.io/modeligado/edit.html)
-This project has the porpouse beeing a tool that allows you to build 
+Convert text to UML class diagrams.
 
-Convert text to UML. [Access here](https://matheusgr.github.io/modeligado/edit.html)!
+This is a fork of [matheusgr/modeligado](https://github.com/matheusgr/modeligado)
+([original site](https://matheusgr.github.io/modeligado/edit.html)). On top of the
+original tool, this fork adds [multiplicity](#multiplicity) on relationships.
+
+Try it: [Access here](https://<your-user>.github.io/modeligado/edit.html)!
 
 ## Example
 
@@ -11,6 +14,7 @@ Convert text to UML. [Access here](https://matheusgr.github.io/modeligado/edit.h
 Aluno
 extends Pessoa
 implements Nomeavel <Interface>, Identificavel <Interface>
+association Turma [1:*]
 ---
 - turmas: List<Turma>
 - nome: str
@@ -32,23 +36,30 @@ There are three parts when modelling a class:
 * Attributes
 * Methods (including constructors)
 
-Each part is separeted with at least 3 dashes (`---`). There is also 3 dashes at the end of a class.
+Each part is separated by a line of at least 3 dashes (`---`). There is also a
+`---` at the end of each class. All three separators are required, even when a
+part is empty.
 
-### Relationships 
+### Relationships
 
-There are five types of relationships among classes:
+There are six types of relationships among classes:
 
-* extends
-* implements
-* association
-* directionalAssociation
-* composes
-* aggregates
+* `extends`: inheritance ("is a").
+* `implements`: the class implements an interface (a contract, without inheriting an implementation).
+* `association`: a plain association between two classes.
+* `directionalAssociation`: an association that only one side knows about. The arrow points to the known class.
+* `aggregates`: a whole-part relationship where the parts can exist on their own.
+* `composes`: a whole-part relationship where the parts depend on the whole.
 
-## Multiplicity
+The diamond of `aggregates` and `composes` is drawn on the class that declares the relationship, which is the whole.
 
-Relationships between objects can show their multiplicity at both ends
-of the link. Write it between square brackets after the target class:
+A related class is identified by its full name, so it must be written exactly as
+it was declared, including a stereotype such as `<Interface>`.
+
+#### Multiplicity
+
+Relationships between objects can show their multiplicity at both ends of the
+link. Write it between square brackets after the target class:
 
 ```
 Aluno
@@ -58,21 +69,23 @@ association Turma [1:*]
 ---
 ```
 
-The value on the left of `:` belongs to the class that declares the
-relationship (`Aluno`) and the value on the right belongs to the target
-(`Turma`). In the example, one `Aluno` is related to many `Turma`.
+![Diagram with multiplicity labels on the relationships](docs/multiplicity.png)
 
-Supported in `association`, `directionalAssociation`, `aggregates` and
+The value on the left of `:` belongs to the class that declares the relationship
+(`Aluno`) and the value on the right belongs to the target (`Turma`). In the
+example, one `Aluno` is related to many `Turma`.
+
+It is supported in `association`, `directionalAssociation`, `aggregates` and
 `composes`. `extends` and `implements` do not accept multiplicity.
 
 Each side can be:
 
-| Value        | Meaning                       |
-|--------------|-------------------------------|
-| `1`, `3`     | an exact number               |
-| `0..1`, `2..5` | an interval                 |
-| `1..*`       | a minimum with no upper limit |
-| `*`          | any number (zero or more)     |
+| Value          | Meaning                       |
+|----------------|-------------------------------|
+| `1`, `3`       | an exact number               |
+| `0..1`, `2..5` | an interval                   |
+| `1..*`         | a minimum with no upper limit |
+| `*`            | any number (zero or more)     |
 
 Each target of a relationship can have its own multiplicity:
 
@@ -84,22 +97,24 @@ Rules and limitations:
 
 - Multiplicity is optional. Relationships without it work as before.
 - There must be a space before `[`, and no spaces inside the brackets.
-- `[` and `]` are reserved for multiplicity in relationship targets.
-  Class names, attribute types and method types are not affected.
-- The lower bound of an interval is not compared with the upper bound,
-  so `5..2` is accepted.
+- `[` and `]` are reserved for multiplicity in relationship targets. Class
+  names, attribute types and method types are not affected.
+- The lower bound of an interval is not compared with the upper bound, so
+  `5..2` is accepted.
 
 ### Visibility
-There are three types of visibilities that can be used on attributes and methods.
 
-* private ```-```
-* public ```+```
-* protected ```#```
+There are three types of visibilities that can be used on attributes and methods:
+
+* private `-`
+* public `+`
+* protected `#`
 
 ### Modifier
-You can also define class scope attributes and methods by adding a static modifier after visibility:
 
-* static
+You can also define class scope attributes and methods by adding a static modifier after the visibility:
+
+* `static`
 
 ## Run in your machine
 
@@ -108,4 +123,31 @@ Use any HTTP server to run modeligado in your computer:
 - javascript: [serve](https://www.npmjs.com/package/serve)
 - python: `python -m http.server 5000`
 
-Then go to http://localhost:5000/edit.html (change the port 5000 if needed)
+Then go to http://localhost:5000/edit.html (change the port 5000 if needed).
+
+## Development
+
+Install the dependencies (the optional ones are only needed to generate images
+from the command line):
+
+```
+yarn install --ignore-optional
+```
+
+or, with npm:
+
+```
+npm install --omit=optional
+```
+
+Run the parser tests (requires Node 18 or newer) and the linter:
+
+```
+node --test
+npx eslint parser.js gojs.js
+```
+
+## License
+
+Released under the MIT license, see [LICENSE](LICENSE). Original project by
+[matheusgr](https://github.com/matheusgr).
