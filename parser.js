@@ -44,14 +44,27 @@ class State {
     this.className = name
   }
 
-  addClassRelation (relatedClass, relation, inverse) {
+  addClassRelation (relatedClass, relation, inverse, multiplicity) {
     this._check('CLASS')
     this.relates.add(relatedClass)
-    if (inverse) {
-      this.relations.push({ to: this.context.name, from: relatedClass, relationship: relation })
-    } else {
-      this.relations.push({ from: this.context.name, to: relatedClass, relationship: relation })
+    if(multiplicity == '[]'){
+      if (inverse) {
+        this.relations.push({ to: this.context.name, from: relatedClass, relationship: relation, })
+      } else {
+        this.relations.push({ from: this.context.name, to: relatedClass, relationship: relation })
+      }
     }
+    else{
+      const aux = multiplicity.split(':')
+      const left = aux[0].substring(1,aux[0].length)
+      const right = aux[1].substring(0,aux[1].length-1)
+      if (inverse) {
+        this.relations.push({ to: this.context.name, toMult: left, from: relatedClass, fromMult: right, relationship: relation })
+      } else {
+        this.relations.push({ from: this.context.name, fromMult: left, to: relatedClass, toMult: right, relationship: relation })
+      }
+    }
+    
   }
 
   stopClass () {
@@ -132,10 +145,41 @@ class Extractor {
   }
 
   _prepareRelation (relation, types) {
+    const typeList = []
+    const multList = []
     if (!Object.prototype.hasOwnProperty.call(this.relations, relation)) {
       throw new ParseError(this.lineNumber, 'Unknown relation: ' + relation)
     }
-    return { relation: this.relations[relation][0], types: types, inverse: this.relations[relation][1] }
+    for (const class_ of types){
+      if (class_.match(/^[^[\]]+$/)){
+        typeList.push(class_)
+        multList.push('[]')
+      }
+      else{
+        if (relation === 'extends' || relation === 'implements'){ // testa se a relação é valida
+          throw new ParseError(this.lineNumber, 'Invalid usage: ' + class_ + '. Do not use multiplicity in generalization')
+        }
+        const bracketsPos = class_.indexOf('[')
+        const mult = class_.substring(bracketsPos, class_.length)
+        const name = class_.substring(0, bracketsPos).trim()
+        if (name === ''){
+           throw new ParseError(this.lineNumber, 'Invalid sintax: ' + class_ + '. Must have a class name1')
+        }
+        if (class_[bracketsPos-1] !== ' '){
+           throw new ParseError(this.lineNumber, 'Invalid sintax: ' + class_ + '. Must have a class [')
+        }
+        if (!mult.match(/^\[((\d+\.\.(\d+|\*))|\d+|\*):((\d+\.\.(\d+|\*))|\d+|\*)\]$/)){ // testa se o regex é valido
+          throw new ParseError(this.lineNumber, 'Invalid sintax: ' + mult)
+        }
+        if (!name.match(/^[^[\]]*$/)){
+          throw new ParseError(this.lineNumber, 'Invalid sintax: ' + name)
+        }
+        
+        typeList.push(name)
+        multList.push(mult)
+      }
+    }
+    return { relation: this.relations[relation][0], types: typeList, inverse: this.relations[relation][1], multiplicitys :multList }
   }
 
   removeComment (line) {
@@ -357,11 +401,25 @@ class Parser {
   _extractData (state, extractor, line) {
     if (state.isRoot()) {
       state.startClass(line)
+
     } else if (state.isClass()) {
       const relationships = extractor.extractRelation(line)
-      for (const class_ of relationships.types) {
-        state.addClassRelation(class_, relationships.relation, relationships.inverse)
+
+      if (relationships.relation === 'generalizationInterface' || relationships.relation === 'generalization') {
+        for (const aux of relationships.multiplicitys){
+          if (aux !== '[]'){
+            throw new ParseError(state.lineNumber, 'Do not use multiplicity on generalizations')
+          }
+        }
       }
+
+      let currentMultiplicity = 0
+      for (const class_ of relationships.types) {
+        
+        state.addClassRelation(class_, relationships.relation, relationships.inverse, relationships.multiplicitys[currentMultiplicity])
+        currentMultiplicity++
+      }
+
     } else if (state.isAttr()) {
       state.addAttr({ className: state.className, ...extractor.extractAttr(line) })
     } else if (state.isMethod()) {
