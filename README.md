@@ -6,7 +6,7 @@ This is a fork of [matheusgr/modeligado](https://github.com/matheusgr/modeligado
 ([original site](https://matheusgr.github.io/modeligado/edit.html)). On top of the
 original tool, this fork adds [multiplicity](#multiplicity) on relationships.
 
-Try it: [Access here](https://<your-user>.github.io/modeligado/edit.html)!
+Try it: [Access here](https://DevMoitinho.github.io/modeligado/edit.html)!
 
 ## Example
 
