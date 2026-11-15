@@ -49,7 +49,7 @@ class State {
     this.relates.add(relatedClass)
     if(multiplicity == '[]'){
       if (inverse) {
-        this.relations.push({ to: this.context.name, from: relatedClass, relationship: relation })
+        this.relations.push({ to: this.context.name, from: relatedClass, relationship: relation, })
       } else {
         this.relations.push({ from: this.context.name, to: relatedClass, relationship: relation })
       }
