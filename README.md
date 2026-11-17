@@ -1,3 +1,4 @@
+[![Tests](https://github.com/DevMoitinho/modeligado/actions/workflows/node.js.yml/badge.svg?branch=master)](https://github.com/DevMoitinho/modeligado/actions/workflows/node.js.yml)
 # Modeligado
 
 Convert text to UML class diagrams.
