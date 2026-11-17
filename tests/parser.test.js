@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
-import { Parser } from './parser.js'
+import { Parser } from '../parser.js'
 
 function generateClass (relation) {
   return [
