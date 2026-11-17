@@ -8,8 +8,8 @@
   <meta name="author" content="Matheus Gaudencio">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Modeligado - Text to UML</title>
-  <link rel="stylesheet" href="normalize.css">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="./css/normalize.css">
+  <link rel="stylesheet" href="./css/styles.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.63.1/theme/eclipse.min.css">
@@ -18,11 +18,11 @@
   <script src= "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.min.js"></script>
 
   <script type="module">
-    import { init, create, ClickHistory } from "./gojs.js"
-    import { init as initSequence, load as createSequence } from "./sequence_diagram.js"
-    import { parse, exportPng, exportSvg, exportTxt, exportJava } from "./modeligado.js"
-    import { clickControl } from "./flow.js"
-    import { load, loadExample, save } from "./modeligado_storage.js"
+    import { init, create, ClickHistory } from "./src/gojs.js"
+    import { init as initSequence, load as createSequence } from "./src/sequence_diagram.js"
+    import { parse, exportPng, exportSvg, exportTxt, exportJava } from "./src/modeligado.js"
+    import { clickControl } from "./src/flow.js"
+    import { load, loadExample, save } from "./src/modeligado_storage.js"
 
     const sequenceGraph = {
       "class": "go.GraphLinksModel",
